@@ -18,7 +18,7 @@ public class Farm {
 
     private String name;
     private String location;
-    private Double size; // in hectares
+    private Double size;
     private LocalDate createdDate;
 
     @OneToMany(mappedBy = "farm", cascade = CascadeType.ALL, orphanRemoval = true)
