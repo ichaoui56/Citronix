@@ -3,6 +3,7 @@ package com.projet.citronix.controller;
 import com.projet.citronix.annotation.checkExistance.Exist;
 import com.projet.citronix.dto.farm.FarmRequestDTO;
 import com.projet.citronix.dto.farm.FarmResponseDTO;
+import com.projet.citronix.dto.farm.FarmSearchDTO;
 import com.projet.citronix.model.Farm;
 import com.projet.citronix.repository.FarmRepository;
 import com.projet.citronix.service.FarmService;
@@ -53,5 +54,19 @@ public class FarmController {
         FarmResponseDTO response = farmService.updateFarm(farmId, farmRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<FarmResponseDTO>> searchFarms(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "location", required = false) String location,
+            @RequestParam(value = "size", required = false) Double size,
+            @RequestParam(value = "createdDateAfter", required = false) String createdDateAfter) {
+
+        FarmSearchDTO searchDTO = new FarmSearchDTO(name, location, size, createdDateAfter);
+        List<FarmResponseDTO> response = farmService.getAllFarmsByNameAndLocalisation(searchDTO);
+        return ResponseEntity.ok(response);
+    }
+
+
 
 }

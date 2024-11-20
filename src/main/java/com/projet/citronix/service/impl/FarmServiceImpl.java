@@ -2,14 +2,18 @@ package com.projet.citronix.service.impl;
 
 import com.projet.citronix.dto.farm.FarmRequestDTO;
 import com.projet.citronix.dto.farm.FarmResponseDTO;
+import com.projet.citronix.dto.farm.FarmSearchDTO;
 import com.projet.citronix.mapper.FarmMapper;
 import com.projet.citronix.model.Farm;
 import com.projet.citronix.repository.FarmRepository;
+import com.projet.citronix.repository.criteriaBuilder.IFarmCriteria;
 import com.projet.citronix.service.FarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,6 +23,7 @@ public class FarmServiceImpl implements FarmService {
 
     private final FarmRepository farmRepository;
     private final FarmMapper farmMapper;
+    private final IFarmCriteria fermeCriteria;
 
     @Override
     public FarmResponseDTO addFarm(FarmRequestDTO farmRequestDTO) {
@@ -72,4 +77,30 @@ public class FarmServiceImpl implements FarmService {
             throw new RuntimeException("Farm not found");
         }
     }
+
+    @Override
+    public List<FarmResponseDTO> getAllFarmsByNameAndLocalisation(FarmSearchDTO searchFermeDTO) {
+
+        Map<String, Object> filters = new HashMap<>();
+        if (searchFermeDTO.getName() != null) {
+            filters.put("name", searchFermeDTO.getName());
+        }
+        if (searchFermeDTO.getLocation() != null) {
+            filters.put("location", searchFermeDTO.getLocation());
+        }
+        if (searchFermeDTO.getSize() != null) {
+            filters.put("size", searchFermeDTO.getSize());
+        }
+        if (searchFermeDTO.getCreatedDateAfter() != null) {
+            filters.put("createdDateAfter", searchFermeDTO.getCreatedDateAfter());
+        }
+
+        List<Farm> farms = fermeCriteria.findFarmsByCriteria(filters);
+        if (farms.isEmpty()) {
+            throw new RuntimeException("No farms found matching the criteria");
+        }
+
+        return farms.stream().map(farmMapper::toFarmResponseDTO).toList();
+    }
+
 }
