@@ -16,7 +16,7 @@ public class Field {
     private Long id;
 
     private String name;
-    private Double area; // in hectares
+    private Double area;
 
     @ManyToOne
     @JoinColumn(name = "farm_id")
