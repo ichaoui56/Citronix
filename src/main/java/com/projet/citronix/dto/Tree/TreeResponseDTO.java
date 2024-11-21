@@ -7,6 +7,7 @@ import java.time.LocalDate;
 public record TreeResponseDTO (
         Long id,
         Integer age,
+        Double productivity,
         LocalDate plantationDate,
         EmdbFieldResponseDTO field
 ) {
