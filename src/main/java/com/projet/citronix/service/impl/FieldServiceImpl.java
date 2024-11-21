@@ -2,6 +2,7 @@ package com.projet.citronix.service.impl;
 
 import com.projet.citronix.dto.field.FieldRequestDTO;
 import com.projet.citronix.dto.field.FieldResponseDTO;
+import com.projet.citronix.exception.FarmLimitExceededException;
 import com.projet.citronix.mapper.FieldMapper;
 import com.projet.citronix.model.Farm;
 import com.projet.citronix.model.Field;
@@ -24,11 +25,26 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public FieldResponseDTO createField(FieldRequestDTO fieldRequestDTO) {
-
+        Field field = fieldMapper.toEntity(fieldRequestDTO);
         Farm farm = farmRepository.findById(fieldRequestDTO.farm_id())
                 .orElseThrow(() -> new RuntimeException("Farm not found"));
 
-        Field field = fieldMapper.toEntity(fieldRequestDTO);
+        double allowableSuperficie = farm.getSize() / 2;
+        double totalExistingSuperficie = farm.getFields().stream()
+                .mapToDouble(Field::getArea)
+                .sum();
+
+        if (farm.getFields().size() >= 10) {
+            throw new FarmLimitExceededException("Farm cannot have more than 10 champs.");
+        }
+
+        if (allowableSuperficie < field.getArea()) {
+            throw new FarmLimitExceededException("Field area must not exceed " + allowableSuperficie + " (50% of the farm size).");
+        }
+
+        if (farm.getSize() < totalExistingSuperficie + field.getArea()) {
+            throw new FarmLimitExceededException("Exceeded limit. Only " + (farm.getSize() - totalExistingSuperficie) + " is available.");
+        }
 
         field.setFarm(farm);
 
