@@ -14,5 +14,7 @@ public interface FieldService {
 
     boolean deleteField(Long id);
 
+    List<FieldResponseDTO> findAll();
+
     FieldResponseDTO updateField(Long id, FieldRequestDTO fieldRequestDTO);
 }
