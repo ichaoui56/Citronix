@@ -18,9 +18,9 @@ public class Harvest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String season; // e.g., "winter", "spring"
+    private String season;
     private LocalDate date;
-    private Double totalQuantity; // total quantity harvested
+    private Double totalQuantity;
 
     @ManyToOne
     @JoinColumn(name = "field_id")

@@ -23,6 +23,9 @@ public class Tree {
     @Transient
     private int age;
 
+    @Transient
+    private int productivity;
+
     @ManyToOne
     @JoinColumn(name = "field_id")
     private Field field;
@@ -34,6 +37,10 @@ public class Tree {
         return calculateAge();
     }
 
+    public int getProductivity(){
+        return calculateProductivity();
+    }
+
     private int calculateAge() {
         LocalDate currentDate = LocalDate.now();
         assert plantationDate != null;
@@ -42,6 +49,20 @@ public class Tree {
         int years = period.getYears();
         int months = period.getMonths();
         return years + (months / 12);
+    }
+
+    private int calculateProductivity() {
+        int age = getAge();
+
+        if (age < 3) {
+            return 2;
+        } else if (age <= 10) {
+            return 12;
+        } else if (age <= 20) {
+            return 20;
+        } else {
+            return 0;
+        }
     }
 
     public Long getId() {
