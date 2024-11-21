@@ -6,6 +6,7 @@ import com.projet.citronix.exception.FarmLimitExceededException;
 import com.projet.citronix.mapper.FieldMapper;
 import com.projet.citronix.model.Farm;
 import com.projet.citronix.model.Field;
+import com.projet.citronix.model.Tree;
 import com.projet.citronix.repository.FarmRepository;
 import com.projet.citronix.repository.FieldRepository;
 import com.projet.citronix.service.FieldService;
@@ -61,7 +62,10 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public FieldResponseDTO getFieldById(Long id) {
+
         Field field = fieldRepository.findById(id).orElseThrow(() -> new RuntimeException("Field not found"));
+
+
         return fieldMapper.toDTO(field);
     }
 
@@ -72,6 +76,11 @@ public class FieldServiceImpl implements FieldService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<FieldResponseDTO> findAll() {
+        return List.of();
     }
 
     @Override
