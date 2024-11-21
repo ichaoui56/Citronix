@@ -27,14 +27,14 @@ public class FarmServiceImpl implements FarmService {
 
     @Override
     public FarmResponseDTO addFarm(FarmRequestDTO farmRequestDTO) {
-        System.out.println("FarmRequestDTO: " + farmRequestDTO); // Vérifiez les données entrantes
-        Farm farm = farmMapper.toFarm(farmRequestDTO);
-        System.out.println("Mapped Farm: " + farm); // Vérifiez la conversion DTO -> Entity
+        System.out.println("service: " + farmRequestDTO.name());
+        Farm farm = farmMapper.toEntity(farmRequestDTO);
+        System.out.println("mapper: " + farm.getName());
         farm = farmRepository.save(farm);
-        System.out.println("Saved Farm: " + farm); // Vérifiez les données enregistrées
-        return farmMapper.toFarmResponseDTO(farm);
-    }
+        System.out.println("response: " + farmMapper.toDTO(farm));
 
+        return farmMapper.toDTO(farm);
+    }
 
     @Override
     public FarmResponseDTO updateFarm(Long id, FarmRequestDTO farmRequestDTO) {
@@ -42,9 +42,9 @@ public class FarmServiceImpl implements FarmService {
         if (existingFarmOpt.isPresent()) {
             Farm existingFarm = existingFarmOpt.get();
 
-            farmMapper.updateFarmFromRequestDTO(farmRequestDTO, existingFarm);
+            farmMapper.toEntity(farmRequestDTO);
             existingFarm = farmRepository.save(existingFarm);
-            return farmMapper.toFarmResponseDTO(existingFarm);
+            return farmMapper.toDTO(existingFarm);
         } else {
             throw new RuntimeException("Farm not found");
         }
@@ -64,7 +64,7 @@ public class FarmServiceImpl implements FarmService {
     public List<FarmResponseDTO> getAllFarms() {
         List<Farm> farms = farmRepository.findAll();
         return farms.stream()
-                .map(farmMapper::toFarmResponseDTO)
+                .map(farmMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -72,7 +72,7 @@ public class FarmServiceImpl implements FarmService {
     public FarmResponseDTO getFarmById(Long id) {
         Optional<Farm> farmOpt = farmRepository.findById(id);
         if (farmOpt.isPresent()) {
-            return farmMapper.toFarmResponseDTO(farmOpt.get());
+            return farmMapper.toDTO(farmOpt.get());
         } else {
             throw new RuntimeException("Farm not found");
         }
@@ -82,17 +82,17 @@ public class FarmServiceImpl implements FarmService {
     public List<FarmResponseDTO> getAllFarmsByNameAndLocalisation(FarmSearchDTO searchFermeDTO) {
 
         Map<String, Object> filters = new HashMap<>();
-        if (searchFermeDTO.getName() != null) {
-            filters.put("name", searchFermeDTO.getName());
+        if (searchFermeDTO.name() != null) {
+            filters.put("name", searchFermeDTO.name());
         }
-        if (searchFermeDTO.getLocation() != null) {
-            filters.put("location", searchFermeDTO.getLocation());
+        if (searchFermeDTO.location() != null) {
+            filters.put("location", searchFermeDTO.location());
         }
-        if (searchFermeDTO.getSize() != null) {
-            filters.put("size", searchFermeDTO.getSize());
+        if (searchFermeDTO.size() != null) {
+            filters.put("size", searchFermeDTO.size());
         }
-        if (searchFermeDTO.getCreatedDateAfter() != null) {
-            filters.put("createdDateAfter", searchFermeDTO.getCreatedDateAfter());
+        if (searchFermeDTO.createdDateAfter() != null) {
+            filters.put("createdDateAfter", searchFermeDTO.createdDateAfter());
         }
 
         List<Farm> farms = fermeCriteria.findFarmsByCriteria(filters);
@@ -100,7 +100,7 @@ public class FarmServiceImpl implements FarmService {
             throw new RuntimeException("No farms found matching the criteria");
         }
 
-        return farms.stream().map(farmMapper::toFarmResponseDTO).toList();
+        return farms.stream().map(farmMapper::toDTO).toList();
     }
 
 }

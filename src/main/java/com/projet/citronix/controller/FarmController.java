@@ -24,12 +24,14 @@ public class FarmController {
 
     @PostMapping
     public ResponseEntity<FarmResponseDTO> createFarm(@RequestBody @Valid FarmRequestDTO farmRequestDTO) {
+        System.out.println("controller: " + farmRequestDTO.name());
         FarmResponseDTO response = farmService.addFarm(farmRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<FarmResponseDTO>> getAllFarms() {
+
         List<FarmResponseDTO> response = farmService.getAllFarms();
         return ResponseEntity.status(HttpStatus.FOUND).body(response);
     }
@@ -51,6 +53,7 @@ public class FarmController {
 
     @PutMapping("/{farmId}")
     public ResponseEntity<FarmResponseDTO> updateFarm(@PathVariable("farmId") Long farmId, @RequestBody @Valid FarmRequestDTO farmRequestDTO) {
+        System.out.println(farmRequestDTO);
         FarmResponseDTO response = farmService.updateFarm(farmId, farmRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
