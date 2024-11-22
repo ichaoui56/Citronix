@@ -87,7 +87,7 @@ public class TreeServiceImpl implements TreeService {
     }
 
     private void validateTreeCount(Field field) {
-        double allowableTreeCount = (field.getArea() * 100) / 1000;
+        double allowableTreeCount = (field.getArea() * 10) / 1000;
         if (field.getTrees().size() >= allowableTreeCount) {
             throw new IllegalStateException("You have exceeded the limit of allowable trees for this field.");
         }

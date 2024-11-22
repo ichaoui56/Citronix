@@ -3,6 +3,7 @@ package com.projet.citronix.controller;
 import com.projet.citronix.dto.Tree.TreeRequestDTO;
 import com.projet.citronix.dto.Tree.TreeResponseDTO;
 import com.projet.citronix.service.TreeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class TreeController {
     private final TreeService treeService;
 
     @PostMapping
-    public ResponseEntity<TreeResponseDTO> addTree(@RequestBody TreeRequestDTO treeRequestDTO) {
+    public ResponseEntity<TreeResponseDTO> addTree(@Valid @RequestBody TreeRequestDTO treeRequestDTO) {
         TreeResponseDTO response = treeService.addTree(treeRequestDTO);
         return ResponseEntity.ok(response);
     }

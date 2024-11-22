@@ -3,6 +3,7 @@ package com.projet.citronix.controller;
 import com.projet.citronix.dto.field.FieldRequestDTO;
 import com.projet.citronix.dto.field.FieldResponseDTO;
 import com.projet.citronix.service.FieldService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class FieldController {
     private final FieldService fieldService;
 
     @PostMapping
-    public ResponseEntity<FieldResponseDTO> createField(@RequestBody FieldRequestDTO fieldRequestDTO) {
+    public ResponseEntity<FieldResponseDTO> createField(@Valid  @RequestBody FieldRequestDTO fieldRequestDTO) {
         FieldResponseDTO response = fieldService.createField(fieldRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

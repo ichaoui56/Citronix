@@ -1,6 +1,6 @@
 package com.projet.citronix.controller;
 
-import com.projet.citronix.annotation.checkExistance.Exist;
+import com.projet.citronix.annotation.Exist;
 import com.projet.citronix.dto.farm.FarmRequestDTO;
 import com.projet.citronix.dto.farm.FarmResponseDTO;
 import com.projet.citronix.dto.farm.FarmSearchDTO;
