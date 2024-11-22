@@ -1,6 +1,6 @@
 package com.projet.citronix.dto.field;
 
-import com.projet.citronix.annotation.checkExistance.Exist;
+import com.projet.citronix.annotation.Exist;
 import com.projet.citronix.model.Farm;
 import com.projet.citronix.repository.FarmRepository;
 import jakarta.validation.constraints.NotNull;

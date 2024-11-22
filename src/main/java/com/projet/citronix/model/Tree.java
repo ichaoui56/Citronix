@@ -1,11 +1,10 @@
 package com.projet.citronix.model;
 
-
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
-
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Entity
@@ -18,51 +17,30 @@ public class Tree {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Plantation date cannot be null")
+    @PastOrPresent(message = "Plantation date must be in the past or present")
     private LocalDate plantationDate;
-
-    @Transient
-    private int age;
-
-    @Transient
-    private int productivity;
 
     @ManyToOne
     @JoinColumn(name = "field_id")
+    @NotNull(message = "Field must not be null")
     private Field field;
 
     @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HarvestDetail> harvestDetails;
 
+    @Transient
     public int getAge() {
-        return calculateAge();
+        return plantationDate != null ? (int) ChronoUnit.YEARS.between(plantationDate, LocalDate.now()) : 0;
     }
 
-    public int getProductivity(){
-        return calculateProductivity();
-    }
-
-    private int calculateAge() {
-        LocalDate currentDate = LocalDate.now();
-        assert plantationDate != null;
-
-        Period period = Period.between(plantationDate, currentDate);
-        int years = period.getYears();
-        int months = period.getMonths();
-        return years + (months / 12);
-    }
-
-    private int calculateProductivity() {
+    @Transient
+    public double getProductivity() {
         int age = getAge();
-
-        if (age < 3) {
-            return 2;
-        } else if (age <= 10) {
-            return 12;
-        } else if (age <= 20) {
-            return 20;
-        } else {
-            return 0;
-        }
+        if (age < 3) return 2;       // Young trees have lower productivity
+        if (age <= 10) return 12;    // Peak productivity
+        if (age <= 20) return 20;    // Mature productivity
+        return 0;                    // Old trees are not productive
     }
 
     public Long getId() {
