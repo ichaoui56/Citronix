@@ -17,35 +17,30 @@ public class HarvestController {
 
     private final HarvestService harvestService;
 
-    // Create Harvest
     @PostMapping
     public ResponseEntity<HarvestResponseDTO> createHarvest(@RequestBody HarvestRequestDTO harvestRequestDTO) {
         HarvestResponseDTO response = harvestService.addHarvest(harvestRequestDTO);
         return ResponseEntity.ok(response);
     }
 
-    // Get Harvest by ID
     @GetMapping("/{id}")
     public ResponseEntity<HarvestResponseDTO> getHarvestById(@PathVariable Long id) {
         HarvestResponseDTO response = harvestService.getHarvestById(id);
         return ResponseEntity.ok(response);
     }
 
-    // Get All Harvests
     @GetMapping
     public ResponseEntity<List<HarvestResponseDTO>> getAllHarvests() {
         List<HarvestResponseDTO> response = harvestService.getAllHarvests();
         return ResponseEntity.ok(response);
     }
 
-    // Update Harvest
     @PutMapping("/{id}")
     public ResponseEntity<HarvestResponseDTO> updateHarvest(@PathVariable Long id, @RequestBody HarvestUpdateDTO harvestUpdateDTO) {
         HarvestResponseDTO response = harvestService.updateHarvest(id, harvestUpdateDTO);
         return ResponseEntity.ok(response);
     }
 
-    // Delete Harvest
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteHarvest(@PathVariable Long id) {
         harvestService.deleteHarvest(id);

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,6 @@ public class Harvest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Season cannot be blank")
     @Pattern(regexp = "^(SPRING|SUMMER|AUTUMN|WINTER)$", message = "Season must be one of: Spring, Summer, Autumn, Winter")
     private String season;
 
@@ -25,8 +25,6 @@ public class Harvest {
     @PastOrPresent(message = "Date must be in the past or present")
     private LocalDate date;
 
-    @NotNull(message = "Total quantity cannot be null")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Total quantity must be greater than 0")
     private Double totalQuantity;
 
     @ManyToOne
@@ -35,7 +33,7 @@ public class Harvest {
     private Field field;
 
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HarvestDetail> harvestDetails;
+    private List<HarvestDetail> harvestDetails = new ArrayList<>();
 
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sale> sales;
