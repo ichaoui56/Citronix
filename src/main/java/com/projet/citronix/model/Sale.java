@@ -28,10 +28,6 @@ public class Sale {
     @DecimalMin(value = "0.1", inclusive = true, message = "Quantity must be at least 0.1")
     private Double quantity;
 
-    @NotNull(message = "Revenue cannot be null")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Revenue must be at least 0")
-    private Double revenue; // Ensure to calculate this in your service or setter
-
     @NotBlank(message = "Client name cannot be blank")
     @Size(min = 3, max = 255, message = "Client name must be between 3 and 255 characters")
     private String client;
@@ -40,6 +36,11 @@ public class Sale {
     @JoinColumn(name = "harvest_id")
     @NotNull(message = "Harvest must not be null")
     private Harvest harvest;
+
+    @Transient
+    public double getRevenue(){
+        return quantity * unitPrice;
+    }
 
     public Long getId() {
         return id;
@@ -77,15 +78,6 @@ public class Sale {
         return this;
     }
 
-    public Double getRevenue() {
-        return revenue;
-    }
-
-    public Sale setRevenue(Double revenue) {
-        this.revenue = revenue;
-        return this;
-    }
-
     public String getClient() {
         return client;
     }
@@ -103,4 +95,5 @@ public class Sale {
         this.harvest = harvest;
         return this;
     }
+
 }

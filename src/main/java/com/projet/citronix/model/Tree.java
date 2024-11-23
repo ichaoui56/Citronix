@@ -37,10 +37,10 @@ public class Tree {
     @Transient
     public double getProductivity() {
         int age = getAge();
-        if (age < 3) return 2;       // Young trees have lower productivity
-        if (age <= 10) return 12;    // Peak productivity
-        if (age <= 20) return 20;    // Mature productivity
-        return 0;                    // Old trees are not productive
+        if (age < 3) return 2;
+        if (age <= 10) return 12;
+        if (age <= 20) return 20;
+        return 0;
     }
 
     public Long getId() {

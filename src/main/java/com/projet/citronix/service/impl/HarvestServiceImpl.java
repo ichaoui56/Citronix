@@ -3,6 +3,7 @@ package com.projet.citronix.service.impl;
 import com.projet.citronix.dto.harvest.HarvestRequestDTO;
 import com.projet.citronix.dto.harvest.HarvestResponseDTO;
 import com.projet.citronix.dto.harvest.HarvestUpdateDTO;
+import com.projet.citronix.event.HarvestCreatedEvent;
 import com.projet.citronix.mapper.HarvestMapper;
 import com.projet.citronix.model.Field;
 import com.projet.citronix.model.Harvest;
@@ -12,6 +13,7 @@ import com.projet.citronix.repository.FieldRepository;
 import com.projet.citronix.repository.HarvestRepository;
 import com.projet.citronix.service.HarvestService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,9 +23,11 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class HarvestServiceImpl implements HarvestService {
+
     private HarvestRepository harvestRepository;
     private FieldRepository fieldRepository;
     private HarvestMapper harvestMapper;
+    private ApplicationEventPublisher eventPublisher;
 
     public HarvestResponseDTO addHarvest(HarvestRequestDTO harvestRequestDTO) {
         Field field = fieldRepository.findById(harvestRequestDTO.fieldId())
@@ -39,12 +43,13 @@ public class HarvestServiceImpl implements HarvestService {
 
         Harvest harvest = Harvest.builder()
                 .season(season)
-                .date(harvestRequestDTO.date())
                 .totalQuantity(totalQuantity)
+                .date(harvestRequestDTO.date())
                 .field(field)
                 .build();
 
         harvest = harvestRepository.save(harvest);
+        eventPublisher.publishEvent(new HarvestCreatedEvent(harvest,field.getTrees()));
         return harvestMapper.toDTO(harvest);
     }
 
