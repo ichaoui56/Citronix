@@ -1,11 +1,9 @@
 package com.projet.citronix.controller;
 
-import com.projet.citronix.annotation.Exist;
 import com.projet.citronix.dto.farm.FarmRequestDTO;
 import com.projet.citronix.dto.farm.FarmResponseDTO;
 import com.projet.citronix.dto.farm.FarmSearchDTO;
-import com.projet.citronix.model.Farm;
-import com.projet.citronix.repository.FarmRepository;
+
 import com.projet.citronix.service.FarmService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +35,13 @@ public class FarmController {
     }
 
     @GetMapping("/{farmId}")
-    public ResponseEntity<FarmResponseDTO> getFarmById(@PathVariable("farmId") @Exist(entity = Farm.class, repository = FarmRepository.class) Long id) {
+    public ResponseEntity<FarmResponseDTO> getFarmById(@PathVariable("farmId") Long id) {
         FarmResponseDTO response = farmService.getFarmById(id);
         return ResponseEntity.status(HttpStatus.FOUND).body(response);
     }
 
     @DeleteMapping("/{farmId}")
-    public ResponseEntity<String> deleteFarmById(@PathVariable("farmId") @Exist(entity = Farm.class, repository = FarmRepository.class) Long id) {
+    public ResponseEntity<String> deleteFarmById(@PathVariable("farmId")  Long id) {
         boolean isDeleted = farmService.removeFarm(id);
         if (isDeleted) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Farm deleted successfully");

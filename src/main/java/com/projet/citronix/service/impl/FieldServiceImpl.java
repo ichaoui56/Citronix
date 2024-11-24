@@ -2,6 +2,7 @@ package com.projet.citronix.service.impl;
 
 import com.projet.citronix.dto.field.FieldRequestDTO;
 import com.projet.citronix.dto.field.FieldResponseDTO;
+import com.projet.citronix.exception.EntityNotFoundException;
 import com.projet.citronix.mapper.FieldMapper;
 import com.projet.citronix.model.Farm;
 import com.projet.citronix.model.Field;
@@ -79,7 +80,7 @@ public class FieldServiceImpl implements FieldService {
      */
     private Farm getFarmById(Long farmId) {
         return farmRepository.findById(farmId)
-                .orElseThrow(() -> new RuntimeException("Farm not found with ID: " + farmId));
+                .orElseThrow(() -> new EntityNotFoundException("Field", farmId));
     }
 
     /**
@@ -87,7 +88,7 @@ public class FieldServiceImpl implements FieldService {
      */
     private Field getFieldEntityById(Long fieldId) {
         return fieldRepository.findById(fieldId)
-                .orElseThrow(() -> new RuntimeException("Field not found with ID: " + fieldId));
+                .orElseThrow(() -> new EntityNotFoundException("Field", fieldId));
     }
 
     /**

@@ -10,6 +10,7 @@ import com.projet.citronix.model.Tree;
 import com.projet.citronix.repository.HarvestDetailRepository;
 import com.projet.citronix.repository.HarvestRepository;
 import com.projet.citronix.service.HarvestDetailService;
+import com.projet.citronix.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class HarvestDetailServiceImpl implements HarvestDetailService {
     @Transactional(readOnly = true)
     public HarvestDetailResponseDTO getHarvestDetailById(Long id) {
         HarvestDetail harvestDetail = harvestDetailRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("HarvestDetail not found"));
+                .orElseThrow(() -> new EntityNotFoundException("HarvestDetail", id));
         return harvestDetailMapper.toDTO(harvestDetail);
     }
 
@@ -84,7 +85,7 @@ public class HarvestDetailServiceImpl implements HarvestDetailService {
     @Transactional
     public HarvestDetailResponseDTO updateHarvestDetail(Long id, HarvestDetailRequestDTO updateDTO) {
         HarvestDetail existingHarvestDetail = harvestDetailRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("HarvestDetail not found"));
+                .orElseThrow(() -> new EntityNotFoundException("HarvestDetail", id));
 
         if (updateDTO.quantity() != null) {
             existingHarvestDetail.setQuantity(updateDTO.quantity());
@@ -108,7 +109,7 @@ public class HarvestDetailServiceImpl implements HarvestDetailService {
     @Transactional
     public void deleteHarvestDetail(Long id) {
         HarvestDetail harvestDetail = harvestDetailRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("HarvestDetail not found"));
+                .orElseThrow(() -> new EntityNotFoundException("HarvestDetail", id));
 
         Harvest harvest = harvestDetail.getHarvest();
 
@@ -116,7 +117,6 @@ public class HarvestDetailServiceImpl implements HarvestDetailService {
         harvestRepository.save(harvest);
 
         harvestDetailRepository.delete(harvestDetail);
-
     }
 
     /**

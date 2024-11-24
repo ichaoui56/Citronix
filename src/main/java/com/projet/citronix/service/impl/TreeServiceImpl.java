@@ -8,7 +8,7 @@ import com.projet.citronix.model.Tree;
 import com.projet.citronix.repository.FieldRepository;
 import com.projet.citronix.repository.TreeRepository;
 import com.projet.citronix.service.TreeService;
-import jakarta.persistence.EntityNotFoundException;
+import com.projet.citronix.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +89,7 @@ public class TreeServiceImpl implements TreeService {
     private void validateTreeCount(Field field) {
         double allowableTreeCount = (field.getArea() * 10) / 1000;
         if (field.getTrees().size() >= allowableTreeCount) {
-            throw new IllegalStateException("You have exceeded the limit of allowable trees for this field.");
+            throw new IllegalArgumentException("You have exceeded the limit of allowable trees for this field.");
         }
     }
 
@@ -98,7 +98,7 @@ public class TreeServiceImpl implements TreeService {
      */
     private Field validateAndRetrieveField(Long fieldId) {
         return fieldRepository.findById(fieldId)
-                .orElseThrow(() -> new EntityNotFoundException("Field not found with ID: " + fieldId));
+                .orElseThrow(() -> new EntityNotFoundException("Field" ,fieldId));
     }
 
     /**
@@ -106,7 +106,6 @@ public class TreeServiceImpl implements TreeService {
      */
     private Tree retrieveTreeById(Long treeId) {
         return treeRepository.findById(treeId)
-                .orElseThrow(() -> new EntityNotFoundException("Tree not found with ID: " + treeId));
+                .orElseThrow(() -> new EntityNotFoundException("Tree", treeId));
     }
-
 }

@@ -9,7 +9,7 @@ import java.util.List;
 public interface SaleService {
     SaleResponseDTO addSale(SaleRequestDTO saleRequestDTO);
 
-    SaleResponseDTO finById(Long saleId);
+    SaleResponseDTO findById(Long saleId);
 
     List<SaleResponseDTO> findAll();
 
