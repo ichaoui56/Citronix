@@ -1,7 +1,7 @@
 package com.projet.citronix.service.impl;
 
+import com.projet.citronix.dto.harvestDetail.HarvestDetailRequestDTO;
 import com.projet.citronix.dto.harvestDetail.HarvestDetailResponseDTO;
-import com.projet.citronix.dto.harvestDetail.HarvestDetailUpdateDTO;
 import com.projet.citronix.event.HarvestCreatedEvent;
 import com.projet.citronix.mapper.HarvestDetailMapper;
 import com.projet.citronix.model.Harvest;
@@ -45,7 +45,6 @@ public class HarvestDetailServiceImpl implements HarvestDetailService {
 
         List<HarvestDetail> allHarvestDetailsList = harvestDetailRepository.saveAll(harvestDetailsList);
 
-        // Update harvest details and total quantity
         harvest.setHarvestDetails(allHarvestDetailsList);
         harvest.setTotalQuantity(recalculateTotalQuantity(harvest));
         harvestRepository.save(harvest);
@@ -83,7 +82,7 @@ public class HarvestDetailServiceImpl implements HarvestDetailService {
      */
     @Override
     @Transactional
-    public HarvestDetailResponseDTO updateHarvestDetail(Long id, HarvestDetailUpdateDTO updateDTO) {
+    public HarvestDetailResponseDTO updateHarvestDetail(Long id, HarvestDetailRequestDTO updateDTO) {
         HarvestDetail existingHarvestDetail = harvestDetailRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("HarvestDetail not found"));
 
@@ -94,7 +93,9 @@ public class HarvestDetailServiceImpl implements HarvestDetailService {
         HarvestDetail updatedHarvestDetail = harvestDetailRepository.save(existingHarvestDetail);
 
         Harvest harvest = updatedHarvestDetail.getHarvest();
-        harvest.setTotalQuantity(recalculateTotalQuantity(harvest));
+
+        harvestDetailMapper.updateEntityFromDTO(updateDTO, existingHarvestDetail);
+
         harvestRepository.save(harvest);
 
         return harvestDetailMapper.toDTO(updatedHarvestDetail);

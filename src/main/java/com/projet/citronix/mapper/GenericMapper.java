@@ -1,6 +1,7 @@
 package com.projet.citronix.mapper;
 
 import org.mapstruct.MapperConfig;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
 import javax.swing.text.html.parser.Entity;
@@ -9,4 +10,6 @@ import javax.swing.text.html.parser.Entity;
 public interface GenericMapper<ENTITY, REQUESTDTO, RESPONSEDTO> {
     ENTITY toEntity(REQUESTDTO requestdto);
     RESPONSEDTO toDTO(ENTITY entity);
+    void updateEntityFromDTO(REQUESTDTO requestDTO, @MappingTarget ENTITY entity);
+
 }
