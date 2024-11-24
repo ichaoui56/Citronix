@@ -9,6 +9,7 @@ import com.projet.citronix.model.Sale;
 import com.projet.citronix.repository.HarvestRepository;
 import com.projet.citronix.repository.SaleRepository;
 import com.projet.citronix.service.SaleService;
+import com.projet.citronix.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,13 +36,13 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public SaleResponseDTO finById(Long saleId){
+    public SaleResponseDTO findById(Long saleId) {
         Sale sale = retrieveSaleById(saleId);
         return saleMapper.toDTO(sale);
     }
 
     @Override
-    public List<SaleResponseDTO> findAll(){
+    public List<SaleResponseDTO> findAll() {
         return saleRepository.findAll()
                 .stream()
                 .map(saleMapper::toDTO)
@@ -50,28 +51,28 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     @Transactional
-    public void deleteSale(Long id){
-          Sale sale = retrieveSaleById(id);
-          saleRepository.delete(sale);
+    public void deleteSale(Long id) {
+        Sale sale = retrieveSaleById(id);
+        saleRepository.delete(sale);
     }
 
     @Override
     @Transactional
-    public SaleResponseDTO updateSale(Long id, SaleRequestDTO requestDTO){
+    public SaleResponseDTO updateSale(Long id, SaleRequestDTO requestDTO) {
         Sale sale = retrieveSaleById(id);
         Harvest harvest = validateAndRetrieveHarvest(requestDTO.harvestId(), requestDTO.quantity());
         updateHarvestQuantity(harvest, requestDTO.quantity());
 
-        saleMapper.updateEntityFromDTO(requestDTO,sale);
+        saleMapper.updateEntityFromDTO(requestDTO, sale);
 
         Sale updatedSale = saleRepository.save(sale);
 
         return saleMapper.toDTO(updatedSale);
     }
 
-    public Sale retrieveSaleById(Long id){
+    public Sale retrieveSaleById(Long id) {
         return saleRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("sale was not found with this " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Sale", id));
     }
 
     /**
@@ -79,10 +80,10 @@ public class SaleServiceImpl implements SaleService {
      */
     private Harvest validateAndRetrieveHarvest(Long harvestId, Double quantity) {
         Harvest harvest = harvestRepository.findById(harvestId)
-                .orElseThrow(() -> new IllegalArgumentException("Harvest not found with ID: " + harvestId));
+                .orElseThrow(() -> new EntityNotFoundException("Harvest", harvestId));
 
         if (harvest.getTotalQuantity() < quantity) {
-            throw new IllegalStateException("Insufficient harvest quantity. Available: " + harvest.getTotalQuantity());
+            throw new IllegalArgumentException("Insufficient harvest quantity. Available: " + harvest.getTotalQuantity());
         }
         return harvest;
     }

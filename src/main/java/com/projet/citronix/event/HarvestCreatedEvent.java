@@ -9,5 +9,4 @@ public record HarvestCreatedEvent(
         Harvest harvest,
         List<Tree> trees
 ) {
-
 }

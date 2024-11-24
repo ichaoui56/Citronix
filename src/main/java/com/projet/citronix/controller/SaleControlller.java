@@ -39,7 +39,7 @@ public class SaleControlller {
 
     @GetMapping("/{id}")
     public ResponseEntity<SaleResponseDTO> getSaleByid(@PathVariable Long id) {
-        SaleResponseDTO saleResponseDTO = saleService.finById(id);
+        SaleResponseDTO saleResponseDTO = saleService.findById(id);
         return ResponseEntity.status(HttpStatus.FOUND).body(saleResponseDTO);
     }
 

@@ -3,8 +3,8 @@ package com.projet.citronix.service.impl;
 import com.projet.citronix.dto.farm.FarmRequestDTO;
 import com.projet.citronix.dto.farm.FarmResponseDTO;
 import com.projet.citronix.dto.farm.FarmSearchDTO;
-import com.projet.citronix.exception.custom.FarmNotFoundException;
-import com.projet.citronix.exception.custom.InvalidFarmSizeException;
+import com.projet.citronix.exception.EntityNotFoundException;
+import com.projet.citronix.exception.SearchNotFoundException;
 import com.projet.citronix.mapper.FarmMapper;
 import com.projet.citronix.model.Farm;
 import com.projet.citronix.repository.FarmRepository;
@@ -73,7 +73,7 @@ public class FarmServiceImpl implements FarmService {
 
         List<Farm> farms = farmCriteria.findFarmsByCriteria(filters);
         if (farms.isEmpty()) {
-            throw new FarmNotFoundException("No farms found matching the criteria.");
+            throw new SearchNotFoundException("No farms found matching the criteria.");
         }
 
         return farms.stream()
@@ -86,19 +86,15 @@ public class FarmServiceImpl implements FarmService {
      */
     private Farm findTheFarmById(Long id) {
         return farmRepository.findById(id)
-                .orElseThrow(() -> {
-                    System.out.println("Farm with ID " + id + " not found.");
-                    return new FarmNotFoundException("Farm not found with ID: " + id);
-                });
+                .orElseThrow(() -> new EntityNotFoundException("Field", id));
     }
-
 
     /**
      * Validates that the farm size meets the minimum requirement.
      */
     private void validateFarmSize(double size) {
         if (size < 1000) {
-            throw new InvalidFarmSizeException("Farm area size must not be less than 1000.");
+            throw new IllegalArgumentException("Farm area size must not be less than 1000.");
         }
     }
 

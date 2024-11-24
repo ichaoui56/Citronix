@@ -12,6 +12,7 @@ import com.projet.citronix.model.enums.SeasonType;
 import com.projet.citronix.repository.FieldRepository;
 import com.projet.citronix.repository.HarvestRepository;
 import com.projet.citronix.service.HarvestService;
+import com.projet.citronix.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -87,16 +88,15 @@ public class HarvestServiceImpl implements HarvestService {
      */
     private Field retrieveFieldById(Long fieldId) {
         return fieldRepository.findById(fieldId)
-                .orElseThrow(() -> new IllegalArgumentException("Field not found with ID: " + fieldId));
+                .orElseThrow(() -> new EntityNotFoundException("Field", fieldId));
     }
 
     /**
      * Retrieves a Harvest by its ID and ensures it exists.
-     *
      */
     private Harvest retrieveHarvestById(Long harvestId) {
         return harvestRepository.findById(harvestId)
-                .orElseThrow(() -> new IllegalArgumentException("Harvest not found with ID: " + harvestId));
+                .orElseThrow(() -> new EntityNotFoundException("Harvest", harvestId));
     }
 
     /**

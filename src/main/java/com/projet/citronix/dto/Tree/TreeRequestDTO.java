@@ -1,6 +1,5 @@
 package com.projet.citronix.dto.Tree;
 
-import com.projet.citronix.annotation.Exist;
 import com.projet.citronix.model.Field;
 import com.projet.citronix.repository.FieldRepository;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +12,7 @@ public record TreeRequestDTO(
         @PastOrPresent(message = "The plantation date must be today or in the past.")
         LocalDate plantationDate,
 
-        @Exist(entity = Field.class, repository = FieldRepository.class, message = "Field does not exist.")
+        @NotNull
         Long field_id
 ) {
 }
