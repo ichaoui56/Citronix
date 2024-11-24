@@ -11,6 +11,7 @@ import com.projet.citronix.service.TreeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Month;
 import java.util.List;
@@ -25,71 +26,87 @@ public class TreeServiceImpl implements TreeService {
     private final FieldRepository fieldRepository;
 
     @Override
+    @Transactional
     public TreeResponseDTO addTree(TreeRequestDTO treeRequestDTO) {
         validatePlantationDate(treeRequestDTO.plantationDate().getMonthValue());
-
-        Tree tree = treeMapper.toEntity(treeRequestDTO);
-        Field field = fieldRepository.findById(treeRequestDTO.field_id())
-                .orElseThrow(() -> new EntityNotFoundException("Field does not exist."));
-
+        Field field = validateAndRetrieveField(treeRequestDTO.field_id());
         validateTreeCount(field);
 
+        Tree tree = treeMapper.toEntity(treeRequestDTO);
         tree.setField(field);
+
         Tree savedTree = treeRepository.save(tree);
         return treeMapper.toDTO(savedTree);
     }
 
     @Override
     public TreeResponseDTO findById(Long id) {
-        Tree tree = treeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tree not found."));
+        Tree tree = retrieveTreeById(id);
         return treeMapper.toDTO(tree);
     }
 
     @Override
     public List<TreeResponseDTO> findAll() {
-        List<Tree> trees = treeRepository.findAll();
-        return trees.stream()
+        return treeRepository.findAll()
+                .stream()
                 .map(treeMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public TreeResponseDTO updateTree(Long treeId, TreeRequestDTO treeRequestDTO) {
-        Tree tree = treeRepository.findById(treeId)
-                .orElseThrow(() -> new EntityNotFoundException("Tree not found."));
-
         validatePlantationDate(treeRequestDTO.plantationDate().getMonthValue());
-
-        Field field = fieldRepository.findById(treeRequestDTO.field_id())
-                .orElseThrow(() -> new EntityNotFoundException("Field does not exist."));
-
+        Tree tree = retrieveTreeById(treeId);
+        Field field = validateAndRetrieveField(treeRequestDTO.field_id());
         validateTreeCount(field);
 
-        tree.setPlantationDate(treeRequestDTO.plantationDate());
-        tree.setField(field);
+        treeMapper.updateEntityFromDTO(treeRequestDTO, tree);
 
         Tree updatedTree = treeRepository.save(tree);
         return treeMapper.toDTO(updatedTree);
     }
 
     @Override
+    @Transactional
     public void deleteTree(Long treeId) {
-        Tree tree = treeRepository.findById(treeId)
-                .orElseThrow(() -> new EntityNotFoundException("Tree not found."));
+        Tree tree = retrieveTreeById(treeId);
         treeRepository.delete(tree);
     }
 
+    /**
+     * Validates the plantation date to ensure it's within an acceptable range.
+     */
     private void validatePlantationDate(int month) {
         if (month >= Month.MARCH.getValue() && month <= Month.MAY.getValue()) {
             throw new IllegalArgumentException("Trees cannot be planted between March and May.");
         }
     }
 
+    /**
+     * Validates the tree count in the field to ensure it doesn't exceed the allowable limit.
+     */
     private void validateTreeCount(Field field) {
         double allowableTreeCount = (field.getArea() * 10) / 1000;
         if (field.getTrees().size() >= allowableTreeCount) {
             throw new IllegalStateException("You have exceeded the limit of allowable trees for this field.");
         }
     }
+
+    /**
+     * Retrieves a Field by its ID and ensures it exists.
+     */
+    private Field validateAndRetrieveField(Long fieldId) {
+        return fieldRepository.findById(fieldId)
+                .orElseThrow(() -> new EntityNotFoundException("Field not found with ID: " + fieldId));
+    }
+
+    /**
+     * Retrieves a Tree by its ID and ensures it exists.
+     */
+    private Tree retrieveTreeById(Long treeId) {
+        return treeRepository.findById(treeId)
+                .orElseThrow(() -> new EntityNotFoundException("Tree not found with ID: " + treeId));
+    }
+
 }

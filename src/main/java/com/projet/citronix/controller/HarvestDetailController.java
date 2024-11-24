@@ -2,12 +2,9 @@ package com.projet.citronix.controller;
 
 import com.projet.citronix.dto.harvestDetail.HarvestDetailRequestDTO;
 import com.projet.citronix.dto.harvestDetail.HarvestDetailResponseDTO;
-import com.projet.citronix.dto.harvestDetail.HarvestDetailUpdateDTO;
-import com.projet.citronix.mapper.HarvestDetailMapper;
-import com.projet.citronix.model.HarvestDetail;
+
 import com.projet.citronix.service.HarvestDetailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +29,9 @@ public class HarvestDetailController {
         return ResponseEntity.ok(responseDTOs);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<HarvestDetailResponseDTO> updateHarvestDetail(@PathVariable Long id, @RequestBody HarvestDetailUpdateDTO updateDTO) {
-        HarvestDetailResponseDTO responseDTO = harvestDetailService.updateHarvestDetail(id, updateDTO);
+    @PutMapping
+    public ResponseEntity<HarvestDetailResponseDTO> updateHarvestDetail(@RequestBody HarvestDetailRequestDTO updateDTO) {
+        HarvestDetailResponseDTO responseDTO = harvestDetailService.updateHarvestDetail(updateDTO.id(), updateDTO);
         return ResponseEntity.ok(responseDTO);
     }
 
