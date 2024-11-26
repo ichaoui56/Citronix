@@ -3,9 +3,9 @@ package com.projet.citronix.service.impl;
 import com.projet.citronix.dto.sale.SaleRequestDTO;
 import com.projet.citronix.dto.sale.SaleResponseDTO;
 import com.projet.citronix.mapper.SaleMapper;
-import com.projet.citronix.mapper.SaleMapperImpl;
 import com.projet.citronix.model.Harvest;
 import com.projet.citronix.model.Sale;
+import com.projet.citronix.model.enums.SeasonType;
 import com.projet.citronix.repository.HarvestRepository;
 import com.projet.citronix.repository.SaleRepository;
 import com.projet.citronix.service.SaleService;
@@ -24,7 +24,6 @@ public class SaleServiceImpl implements SaleService {
     private final SaleRepository saleRepository;
     private final HarvestRepository harvestRepository;
     private final SaleMapper saleMapper;
-    private final SaleMapperImpl saleMapperImpl;
 
     @Override
     @Transactional

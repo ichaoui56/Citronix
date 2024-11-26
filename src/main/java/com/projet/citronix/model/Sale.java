@@ -6,7 +6,8 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,60 +41,6 @@ public class Sale {
     @Transient
     public double getRevenue(){
         return quantity * unitPrice;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Sale setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public Sale setDate(LocalDate date) {
-        this.date = date;
-        return this;
-    }
-
-    public Double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public Sale setUnitPrice(Double unitPrice) {
-        this.unitPrice = unitPrice;
-        return this;
-    }
-
-    public Double getQuantity() {
-        return quantity;
-    }
-
-    public Sale setQuantity(Double quantity) {
-        this.quantity = quantity;
-        return this;
-    }
-
-    public String getClient() {
-        return client;
-    }
-
-    public Sale setClient(String client) {
-        this.client = client;
-        return this;
-    }
-
-    public Harvest getHarvest() {
-        return harvest;
-    }
-
-    public Sale setHarvest(Harvest harvest) {
-        this.harvest = harvest;
-        return this;
     }
 
 }

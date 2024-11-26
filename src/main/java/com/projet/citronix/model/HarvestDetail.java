@@ -5,7 +5,8 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,39 +30,4 @@ public class HarvestDetail {
     @NotNull(message = "Harvest must not be null")
     private Harvest harvest;
 
-    public Long getId() {
-        return id;
-    }
-
-    public HarvestDetail setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public Double getQuantity() {
-        return quantity;
-    }
-
-    public HarvestDetail setQuantity(Double quantity) {
-        this.quantity = quantity;
-        return this;
-    }
-
-    public Tree getTree() {
-        return tree;
-    }
-
-    public HarvestDetail setTree(Tree tree) {
-        this.tree = tree;
-        return this;
-    }
-
-    public Harvest getHarvest() {
-        return harvest;
-    }
-
-    public HarvestDetail setHarvest(Harvest harvest) {
-        this.harvest = harvest;
-        return this;
-    }
 }

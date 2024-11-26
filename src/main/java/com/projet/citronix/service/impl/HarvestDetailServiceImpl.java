@@ -122,7 +122,7 @@ public class HarvestDetailServiceImpl implements HarvestDetailService {
     /**
      * Recalculates the total quantity for a given Harvest based on its HarvestDetails.
      */
-    private Double recalculateTotalQuantity(Harvest harvest) {
+    public Double recalculateTotalQuantity(Harvest harvest) {
         return harvest.getHarvestDetails()
                 .stream()
                 .mapToDouble(HarvestDetail::getQuantity)

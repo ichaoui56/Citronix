@@ -22,7 +22,6 @@ public class FarmController {
 
     @PostMapping
     public ResponseEntity<FarmResponseDTO> createFarm(@RequestBody @Valid FarmRequestDTO farmRequestDTO) {
-        System.out.println("controller: " + farmRequestDTO.name());
         FarmResponseDTO response = farmService.addFarm(farmRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
