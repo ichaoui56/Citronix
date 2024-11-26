@@ -11,5 +11,4 @@ public interface GenericMapper<ENTITY, REQUESTDTO, RESPONSEDTO> {
     ENTITY toEntity(REQUESTDTO requestdto);
     RESPONSEDTO toDTO(ENTITY entity);
     void updateEntityFromDTO(REQUESTDTO requestDTO, @MappingTarget ENTITY entity);
-
 }

@@ -9,6 +9,8 @@ import java.util.List;
 
 @Entity
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Tree {
@@ -30,11 +32,16 @@ public class Tree {
     private List<HarvestDetail> harvestDetails;
 
     @Transient
+    private int age;
+
+    @Transient
+    private double productivity;
+
+
     public int getAge() {
         return plantationDate != null ? (int) ChronoUnit.YEARS.between(plantationDate, LocalDate.now()) : 0;
     }
 
-    @Transient
     public double getProductivity() {
         int age = getAge();
         if (age < 3) return 2;
@@ -43,39 +50,4 @@ public class Tree {
         return 0;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Tree setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public LocalDate getPlantationDate() {
-        return plantationDate;
-    }
-
-    public Tree setPlantationDate(LocalDate plantationDate) {
-        this.plantationDate = plantationDate;
-        return this;
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public Tree setField(Field field) {
-        this.field = field;
-        return this;
-    }
-
-    public List<HarvestDetail> getHarvestDetails() {
-        return harvestDetails;
-    }
-
-    public Tree setHarvestDetails(List<HarvestDetail> harvestDetails) {
-        this.harvestDetails = harvestDetails;
-        return this;
-    }
 }

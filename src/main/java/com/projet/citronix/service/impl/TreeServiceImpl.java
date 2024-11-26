@@ -5,6 +5,7 @@ import com.projet.citronix.dto.Tree.TreeResponseDTO;
 import com.projet.citronix.mapper.TreeMapper;
 import com.projet.citronix.model.Field;
 import com.projet.citronix.model.Tree;
+import com.projet.citronix.model.enums.SeasonType;
 import com.projet.citronix.repository.FieldRepository;
 import com.projet.citronix.repository.TreeRepository;
 import com.projet.citronix.service.TreeService;

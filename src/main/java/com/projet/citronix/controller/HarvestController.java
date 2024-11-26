@@ -1,8 +1,10 @@
 package com.projet.citronix.controller;
 
+import com.projet.citronix.dto.field.FieldResponseDTO;
 import com.projet.citronix.dto.harvest.HarvestRequestDTO;
 import com.projet.citronix.dto.harvest.HarvestResponseDTO;
-import com.projet.citronix.dto.harvest.HarvestUpdateDTO;
+import com.projet.citronix.model.Field;
+import com.projet.citronix.model.Harvest;
 import com.projet.citronix.service.HarvestService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +38,7 @@ public class HarvestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HarvestResponseDTO> updateHarvest(@PathVariable Long id, @RequestBody HarvestUpdateDTO harvestUpdateDTO) {
+    public ResponseEntity<HarvestResponseDTO> updateHarvest(@PathVariable Long id, @RequestBody HarvestRequestDTO harvestUpdateDTO) {
         HarvestResponseDTO response = harvestService.updateHarvest(id, harvestUpdateDTO);
         return ResponseEntity.ok(response);
     }

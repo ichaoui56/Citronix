@@ -1,9 +1,11 @@
 package com.projet.citronix.service.impl;
 
+import com.projet.citronix.dto.field.FieldResponseDTO;
 import com.projet.citronix.dto.harvest.HarvestRequestDTO;
 import com.projet.citronix.dto.harvest.HarvestResponseDTO;
-import com.projet.citronix.dto.harvest.HarvestUpdateDTO;
 import com.projet.citronix.event.HarvestCreatedEvent;
+import com.projet.citronix.exception.EntityNotFoundException;
+import com.projet.citronix.mapper.FieldMapper;
 import com.projet.citronix.mapper.HarvestMapper;
 import com.projet.citronix.model.Field;
 import com.projet.citronix.model.Harvest;
@@ -12,13 +14,13 @@ import com.projet.citronix.model.enums.SeasonType;
 import com.projet.citronix.repository.FieldRepository;
 import com.projet.citronix.repository.HarvestRepository;
 import com.projet.citronix.service.HarvestService;
-import com.projet.citronix.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,12 +32,13 @@ public class HarvestServiceImpl implements HarvestService {
     private final FieldRepository fieldRepository;
     private final HarvestMapper harvestMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final FieldMapper fieldMapper;
 
     @Override
     @Transactional
     public HarvestResponseDTO addHarvest(HarvestRequestDTO harvestRequestDTO) {
         Field field = retrieveFieldById(harvestRequestDTO.fieldId());
-        String season = determineSeason(harvestRequestDTO.date());
+        SeasonType season = determineSeason(harvestRequestDTO.date());
 
         validateSeasonalHarvest(field, season);
 
@@ -56,21 +59,22 @@ public class HarvestServiceImpl implements HarvestService {
 
     @Override
     public List<HarvestResponseDTO> getAllHarvests() {
-        return harvestRepository.findAll().stream()
+        return harvestRepository.findAll()
+                .stream()
                 .map(harvestMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public HarvestResponseDTO updateHarvest(Long id, HarvestUpdateDTO harvestUpdateDTO) {
+    public HarvestResponseDTO updateHarvest(Long id, HarvestRequestDTO harvestRequestDTO) {
         Harvest existingHarvest = retrieveHarvestById(id);
-        Field field = retrieveFieldById(harvestUpdateDTO.fieldId());
+        Field field = retrieveFieldById(harvestRequestDTO.fieldId());
 
-        String season = determineSeason(harvestUpdateDTO.date());
+        SeasonType season = determineSeason(harvestRequestDTO.date());
         Double totalQuantity = calculateTotalQuantity(field.getTrees());
 
-        updateHarvestDetails(existingHarvest, harvestUpdateDTO, field, season, totalQuantity);
+        updateHarvestDetails(existingHarvest, harvestRequestDTO, field, season, totalQuantity);
 
         Harvest updatedHarvest = harvestRepository.save(existingHarvest);
         return harvestMapper.toDTO(updatedHarvest);
@@ -84,8 +88,8 @@ public class HarvestServiceImpl implements HarvestService {
     }
 
     /**
-     * Retrieves a Field by its ID and ensures it exists.
-     */
+         * Retrieves a Field by its ID and ensures it exists.
+         */
     private Field retrieveFieldById(Long fieldId) {
         return fieldRepository.findById(fieldId)
                 .orElseThrow(() -> new EntityNotFoundException("Field", fieldId));
@@ -99,44 +103,27 @@ public class HarvestServiceImpl implements HarvestService {
                 .orElseThrow(() -> new EntityNotFoundException("Harvest", harvestId));
     }
 
-    /**
-     * Determines the season for a given date.
-     */
-    private String determineSeason(LocalDate date) {
+    private SeasonType determineSeason(LocalDate date) {
         int month = date.getMonthValue();
-        if (month >= 3 && month <= 5) {
-            return SeasonType.SPRING.name();
-        } else if (month >= 6 && month <= 8) {
-            return SeasonType.SUMMER.name();
-        } else if (month >= 9 && month <= 11) {
-            return SeasonType.AUTUMN.name();
-        } else {
-            return SeasonType.WINTER.name();
-        }
+        if (month >= 3 && month <= 5) return SeasonType.SPRING;
+        if (month >= 6 && month <= 8) return SeasonType.SUMMER;
+        if (month >= 9 && month <= 11) return SeasonType.AUTUMN;
+        return SeasonType.WINTER;
     }
 
-    /**
-     * Validates that the field has not already been harvested in the same season.
-     */
-    private void validateSeasonalHarvest(Field field, String season) {
+    private void validateSeasonalHarvest(Field field, SeasonType season) {
         if (harvestRepository.existsByFieldAndSeason(field, season)) {
             throw new IllegalArgumentException("Field has already been harvested in this season");
         }
     }
 
-    /**
-     * Calculates the total quantity based on the productivity of trees.
-     */
-    private Double calculateTotalQuantity(List<Tree> trees) {
+    public Double calculateTotalQuantity(List<Tree> trees) {
         return trees.stream()
                 .mapToDouble(Tree::getProductivity)
                 .sum();
     }
 
-    /**
-     * Creates a new Harvest instance.
-     */
-    private Harvest createHarvest(HarvestRequestDTO harvestRequestDTO, Field field, String season, Double totalQuantity) {
+    private Harvest createHarvest(HarvestRequestDTO harvestRequestDTO, Field field, SeasonType season, Double totalQuantity) {
         return Harvest.builder()
                 .season(season)
                 .totalQuantity(totalQuantity)
@@ -145,10 +132,7 @@ public class HarvestServiceImpl implements HarvestService {
                 .build();
     }
 
-    /**
-     * Updates the details of an existing Harvest.
-     */
-    private void updateHarvestDetails(Harvest harvest, HarvestUpdateDTO updateDTO, Field field, String season, Double totalQuantity) {
+    private void updateHarvestDetails(Harvest harvest, HarvestRequestDTO updateDTO, Field field, SeasonType season, Double totalQuantity) {
         harvest.setSeason(season);
         harvest.setDate(updateDTO.date());
         harvest.setField(field);
