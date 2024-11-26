@@ -11,6 +11,9 @@ import com.projet.citronix.repository.FarmRepository;
 import com.projet.citronix.repository.criteriaBuilder.IFarmCriteria;
 import com.projet.citronix.service.FarmService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +63,7 @@ public class FarmServiceImpl implements FarmService {
                 .map(farmMapper::toDTO)
                 .toList();
     }
+
 
     @Override
     public FarmResponseDTO getFarmById(Long id) {

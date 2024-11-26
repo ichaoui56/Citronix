@@ -3,6 +3,7 @@ package com.projet.citronix.service;
 import com.projet.citronix.dto.farm.FarmRequestDTO;
 import com.projet.citronix.dto.farm.FarmResponseDTO;
 import com.projet.citronix.dto.farm.FarmSearchDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 

@@ -7,6 +7,7 @@ import com.projet.citronix.dto.farm.FarmSearchDTO;
 import com.projet.citronix.service.FarmService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,6 @@ public class FarmController {
 
     @GetMapping
     public ResponseEntity<List<FarmResponseDTO>> getAllFarms() {
-
         List<FarmResponseDTO> response = farmService.getAllFarms();
         return ResponseEntity.status(HttpStatus.FOUND).body(response);
     }

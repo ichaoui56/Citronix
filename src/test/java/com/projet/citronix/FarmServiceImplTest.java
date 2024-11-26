@@ -23,9 +23,6 @@ import static org.mockito.Mockito.*;
 
 class FarmServiceImplTest {
 
-    @InjectMocks
-    private FarmServiceImpl farmService;
-
     @Mock
     private FarmRepository farmRepository;
 
@@ -34,6 +31,9 @@ class FarmServiceImplTest {
 
     @Mock
     private IFarmCriteria farmCriteria;
+
+    @InjectMocks
+    private FarmServiceImpl farmService;
 
     private Farm farm;
     private FarmRequestDTO farmRequestDTO;
@@ -68,7 +68,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void testAddFarm_Success() {
+    void addFarm_ReturnsFarmResponseDTO_WhenSuccessful() {
         when(farmMapper.toEntity(farmRequestDTO)).thenReturn(farm);
         when(farmRepository.save(farm)).thenReturn(farm);
         when(farmMapper.toDTO(farm)).thenReturn(farmResponseDTO);
@@ -81,7 +81,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void updateFarm_Success() {
+    void updateFarm_ReturnsUpdatedFarmResponseDTO_WhenFarmExists() {
         when(farmRepository.findById(farm.getId())).thenReturn(Optional.of(farm));
         when(farmMapper.toDTO(any(Farm.class))).thenReturn(farmResponseDTO);
         when(farmRepository.save(any(Farm.class))).thenReturn(farm);
@@ -95,7 +95,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void updateFarm_FarmSizeTooSmall() {
+    void updateFarm_ThrowsException_WhenFarmSizeIsTooSmall() {
         farmRequestDTO = new FarmRequestDTO(
                 "Small Farm",
                 "Location C",
@@ -113,7 +113,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void updateFarm_NotFound() {
+    void updateFarm_ThrowsEntityNotFoundException_WhenFarmDoesNotExist() {
         when(farmRepository.findById(farm.getId())).thenReturn(Optional.empty());
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -124,15 +124,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void testUpdateFarm_NotFound_ThrowsException() {
-        when(farmRepository.findById(1L)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> farmService.updateFarm(1L, farmRequestDTO));
-        assertEquals("Field not found with ID: 1", exception.getMessage());
-    }
-
-    @Test
-    void testRemoveFarm_Success() {
+    void removeFarm_ReturnsTrue_WhenFarmExists() {
         when(farmRepository.findById(1L)).thenReturn(Optional.of(farm));
 
         boolean result = farmService.removeFarm(1L);
@@ -142,7 +134,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void testRemoveFarm_NotFound_ThrowsException() {
+    void removeFarm_ThrowsEntityNotFoundException_WhenFarmDoesNotExist() {
         when(farmRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> farmService.removeFarm(1L));
@@ -150,7 +142,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void testGetAllFarms_Success() {
+    void getAllFarms_ReturnsListOfFarmResponseDTO_WhenFarmsExist() {
         List<Farm> farms = List.of(farm);
         when(farmRepository.findAll()).thenReturn(farms);
         when(farmMapper.toDTO(farm)).thenReturn(farmResponseDTO);
@@ -163,7 +155,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void testGetFarmById_Success() {
+    void getFarmById_ReturnsFarmResponseDTO_WhenFarmExists() {
         when(farmRepository.findById(1L)).thenReturn(Optional.of(farm));
         when(farmMapper.toDTO(farm)).thenReturn(farmResponseDTO);
 
@@ -174,7 +166,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void testGetFarmById_NotFound_ThrowsException() {
+    void getFarmById_ThrowsEntityNotFoundException_WhenFarmDoesNotExist() {
         when(farmRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> farmService.getFarmById(1L));
@@ -182,7 +174,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void testGetAllFarmsByNameAndLocation_Success() {
+    void searchFarmsByNameAndLocation_ReturnsListOfFarmResponseDTO_WhenMatchingFarmsExist() {
         Map<String, Object> filters = new HashMap<>();
         filters.put("name", "Lemon Farm");
         filters.put("location", "Safi, Morocco");
@@ -199,7 +191,7 @@ class FarmServiceImplTest {
     }
 
     @Test
-    void testGetAllFarmsByNameAndLocation_NotFound_ThrowsException() {
+    void searchFarmsByNameAndLocation_ThrowsSearchNotFoundException_WhenNoMatchingFarmsExist() {
         Map<String, Object> filters = new HashMap<>();
         filters.put("name", "Nonexistent Farm");
 
